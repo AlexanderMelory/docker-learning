@@ -1,0 +1,37 @@
+version: '3'
+
+volumes:
+  mysql_data_pub:
+
+services:
+  frontend:
+    image: alexmelory/time-app-frontend-dev
+    restart: always
+    ports:
+      - '3000:3000'
+  api:
+    image: alexmelory/time-app-api-dev
+    restart: always
+    ports:
+      - '5555:5000'
+    environment:
+      MY_SQL_HOST: 'mysql'
+      MY_SQL_USER: 'root'
+      MY_SQL_PORT: '3306'
+      MY_SQL_PASSWORD: 'password'
+      MY_SQL_DB: 'time_db'
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql
+    volumes:
+      - mysql_data_pub:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: 'time_db'
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '8888:8080'
